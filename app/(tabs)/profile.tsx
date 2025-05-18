@@ -5,14 +5,16 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { getCurrentUser, signOut } from '@/lib/supabase';
+import { getCurrentUser, signOut, supabase } from '@/lib/supabase';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,6 +23,19 @@ export default function ProfileScreen() {
         const { user: userData, error } = await getCurrentUser();
         if (error) throw error;
         setUser(userData);
+
+        // Verificar si el usuario es administrador
+        if (userData) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', userData.id)
+            .single();
+
+          if (!profileError && profile) {
+            setIsAdmin(profile.role === 'admin');
+          }
+        }
       } catch (error) {
         console.error('Error al obtener datos del usuario:', error);
       } finally {
@@ -51,7 +66,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white p-6">
+    <ScrollView className="flex-1 bg-white p-6">
       <Stack.Screen options={{ title: 'Mi Perfil', headerShown: true }} />
 
       <View className="items-center mb-8 mt-4">
@@ -95,12 +110,41 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
+      {isAdmin && (
+        <View className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <Text className="text-lg font-semibold text-gray-800 mb-4">
+            Administración
+          </Text>
+
+          <TouchableOpacity
+            className="flex-row justify-between items-center py-3 border-b border-gray-100"
+            onPress={() => router.push('/admin')}
+          >
+            <Text className="text-gray-600">Panel de Administración</Text>
+            <IconSymbol name="chevron.right" size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row justify-between items-center py-3 border-b border-gray-100"
+            onPress={() => router.push('/admin/risk-reports')}
+          >
+            <Text className="text-gray-600">Reportes de Riesgo</Text>
+            <View className="flex-row items-center">
+              <View className="bg-red-100 w-6 h-6 rounded-full items-center justify-center mr-2">
+                <Text className="text-red-600 text-xs font-bold">!</Text>
+              </View>
+              <IconSymbol name="chevron.right" size={20} color="#9CA3AF" />
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <TouchableOpacity
-        className="bg-red-500 p-4 rounded-lg items-center mt-auto"
+        className="bg-red-500 p-4 rounded-lg items-center mt-auto mb-10"
         onPress={handleSignOut}
       >
         <Text className="text-white font-bold text-lg">Cerrar Sesión</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }

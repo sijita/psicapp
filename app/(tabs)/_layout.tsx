@@ -6,7 +6,7 @@ import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { getCurrentUser } from '@/lib/supabase';
+import { getCurrentUser, supabase } from '@/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
@@ -14,6 +14,7 @@ export default function TabLayout() {
   const router = useRouter();
   const segments = useSegments();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Verificar si el usuario está autenticado
   useEffect(() => {
@@ -30,6 +31,29 @@ export default function TabLayout() {
 
     checkAuth();
   }, [router, segments]);
+
+  const checkUserRole = async () => {
+    try {
+      const { user } = await getCurrentUser();
+
+      // Verificar si el usuario es administrador
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
+      if (error) {
+        console.error('Error al verificar rol de usuario:', error);
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(profile?.role === 'admin');
+      }
+    } catch (error) {
+      console.error('Error al verificar rol de usuario:', error);
+      setIsAdmin(false);
+    }
+  };
 
   // Mostrar las pestañas solo si el usuario está autenticado
   if (isAuthenticated === false) return null;
@@ -55,7 +79,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="home-outline" color={color} />
+            <Ionicons size={18} name="home-outline" color={color} />
           ),
         }}
       />
@@ -64,7 +88,7 @@ export default function TabLayout() {
         options={{
           title: 'Chat',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="chatbox-ellipses-outline" color={color} />
+            <Ionicons size={18} name="chatbox-ellipses-outline" color={color} />
           ),
         }}
       />
@@ -73,7 +97,7 @@ export default function TabLayout() {
         options={{
           title: 'Emociones',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="heart-outline" color={color} />
+            <Ionicons size={18} name="heart-outline" color={color} />
           ),
         }}
       />
@@ -82,7 +106,7 @@ export default function TabLayout() {
         options={{
           title: 'Historial',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="list-outline" color={color} />
+            <Ionicons size={18} name="list-outline" color={color} />
           ),
         }}
       />
@@ -91,7 +115,7 @@ export default function TabLayout() {
         options={{
           title: 'Horario',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="calendar-outline" color={color} />
+            <Ionicons size={18} name="calendar-outline" color={color} />
           ),
         }}
       />
@@ -100,7 +124,16 @@ export default function TabLayout() {
         options={{
           title: 'Perfil',
           tabBarIcon: ({ color }) => (
-            <Ionicons size={28} name="person-circle-outline" color={color} />
+            <Ionicons size={18} name="person-circle-outline" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="admin"
+        options={{
+          title: 'Admin',
+          tabBarIcon: ({ color }) => (
+            <Ionicons size={18} name="settings-outline" color={color} />
           ),
         }}
       />

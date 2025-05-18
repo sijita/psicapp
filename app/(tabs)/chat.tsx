@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Stack } from 'expo-router';
 import { getAIResponse, resetConversation } from '@/lib/openai';
+import { detectSuicideRisk, createRiskReport } from '@/lib/suicideDetection';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -56,6 +57,28 @@ export default function ChatScreen() {
     setIsLoading(true);
 
     try {
+      // Detectar riesgo de suicidio en el mensaje del usuario
+      const { isAtRisk, detectedKeywords } = detectSuicideRisk(inputText);
+
+      // Si se detecta riesgo, crear un reporte
+      if (isAtRisk) {
+        console.log('Riesgo de suicidio detectado:', detectedKeywords);
+        try {
+          const reportResult = await createRiskReport(
+            inputText,
+            detectedKeywords
+          );
+          if (!reportResult.success) {
+            console.error(
+              'Error al crear reporte de riesgo:',
+              reportResult.error
+            );
+          }
+        } catch (reportError) {
+          console.error('Error al procesar reporte de riesgo:', reportError);
+        }
+      }
+
       // Obtener respuesta de la IA
       const response = await getAIResponse(inputText);
 
@@ -178,9 +201,13 @@ export default function ChatScreen() {
         </View>
       )}
 
-      <View className="flex-row items-center p-2 border-t border-gray-200">
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 100}
+        className="flex-row items-center p-2 border-t border-gray-200"
+      >
         <TextInput
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2 mb-5"
           placeholder="Escribe tu mensaje aquí..."
           value={inputText}
           onChangeText={setInputText}
@@ -193,7 +220,7 @@ export default function ChatScreen() {
         >
           <Ionicons name="paper-plane-outline" size={20} color="white" />
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </KeyboardAvoidingView>
   );
 }

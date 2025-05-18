@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { signIn } from '@/lib/supabase';
@@ -39,7 +41,11 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white p-6 justify-center">
+    <KeyboardAvoidingView
+      className="flex-1 bg-white p-6 justify-center"
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
       <Stack.Screen options={{ title: 'Iniciar Sesión', headerShown: true }} />
 
       <View className="items-center mb-8">
@@ -88,6 +94,6 @@ export default function LoginScreen() {
           ¿No tienes una cuenta? Regístrate
         </Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
