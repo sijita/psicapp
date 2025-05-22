@@ -21,14 +21,15 @@ export default function TabLayout() {
     const checkAuth = async () => {
       const { user, error } = await getCurrentUser();
       setIsAuthenticated(!!user);
-
+      if (!user) {
+        setIsAdmin(false); // Limpiar estado admin si no hay usuario
+      }
       // Si no está autenticado y no está en una ruta de autenticación, redirigir a login
       const inAuthGroup = segments[0] === '(auth)';
       if (!user && !inAuthGroup) {
         router.replace('/login');
       }
     };
-
     checkAuth();
   }, [router, segments]);
 
@@ -57,6 +58,14 @@ export default function TabLayout() {
 
   // Mostrar las pestañas solo si el usuario está autenticado
   if (isAuthenticated === false) return null;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkUserRole();
+    } else {
+      setIsAdmin(false); // Limpiar estado admin si el usuario no está autenticado
+    }
+  }, [isAuthenticated]);
 
   return (
     <Tabs
@@ -128,15 +137,17 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="admin"
-        options={{
-          title: 'Admin',
-          tabBarIcon: ({ color }) => (
-            <Ionicons size={18} name="settings-outline" color={color} />
-          ),
-        }}
-      />
+      {isAdmin && (
+        <Tabs.Screen
+          name="admin"
+          options={{
+            title: 'Admin',
+            tabBarIcon: ({ color }) => (
+              <Ionicons size={18} name="settings-outline" color={color} />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }

@@ -19,9 +19,11 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
+    if (!nombre || !apellido || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
@@ -33,7 +35,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const { data, error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password, nombre, apellido);
       if (error) throw error;
 
       Alert.alert(
@@ -72,13 +74,26 @@ export default function RegisterScreen() {
       <View className="flex-col gap-5 mb-6">
         <TextInput
           className="bg-gray-100 p-4 rounded-lg text-gray-800"
+          placeholder="Nombre"
+          value={nombre}
+          onChangeText={setNombre}
+          autoCapitalize="words"
+        />
+        <TextInput
+          className="bg-gray-100 p-4 rounded-lg text-gray-800"
+          placeholder="Apellido"
+          value={apellido}
+          onChangeText={setApellido}
+          autoCapitalize="words"
+        />
+        <TextInput
+          className="bg-gray-100 p-4 rounded-lg text-gray-800"
           placeholder="Correo electrónico"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
         />
-
         <TextInput
           className="bg-gray-100 p-4 rounded-lg text-gray-800"
           placeholder="Contraseña"
@@ -86,7 +101,6 @@ export default function RegisterScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-
         <TextInput
           className="bg-gray-100 p-4 rounded-lg text-gray-800"
           placeholder="Confirmar contraseña"

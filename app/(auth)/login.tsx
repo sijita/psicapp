@@ -50,8 +50,9 @@ export default function LoginScreen() {
 
       <View className="items-center mb-8">
         <Image
-          source={require('../../assets/images/logo-2.jpg')}
+          source={require('../../assets/images/logo.jpg')}
           style={{ width: 200, height: 200, resizeMode: 'contain' }}
+          className="rounded-lg"
         />
       </View>
       <Text className="text-lg mb-6 text-center text-gray-600">

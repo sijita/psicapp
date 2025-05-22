@@ -18,11 +18,27 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Funciones de autenticación
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  nombre?: string,
+  apellido?: string
+) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
+  if (error) return { data, error };
+
+  // Si el registro fue exitoso, guardar nombre y apellido en la tabla profiles
+  if (data.user && nombre && apellido) {
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      id: data.user.id,
+      email,
+      full_name: `${nombre} ${apellido}`,
+    });
+    if (profileError) return { data, error: profileError };
+  }
   return { data, error };
 };
 

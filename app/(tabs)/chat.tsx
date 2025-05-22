@@ -139,8 +139,8 @@ export default function ChatScreen() {
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white"
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      behavior={'padding'}
+      keyboardVerticalOffset={150}
     >
       <Stack.Screen
         options={{
@@ -200,12 +200,7 @@ export default function ChatScreen() {
           <Text className="text-gray-600 mt-1">Escribiendo respuesta...</Text>
         </View>
       )}
-
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 100}
-        className="flex-row items-center p-2 border-t border-gray-200"
-      >
+      <View className="flex-row items-center p-2 border-t border-gray-200">
         <TextInput
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2 mb-5"
           placeholder="Escribe tu mensaje aquí..."
@@ -220,7 +215,7 @@ export default function ChatScreen() {
         >
           <Ionicons name="paper-plane-outline" size={20} color="white" />
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+      </View>
     </KeyboardAvoidingView>
   );
 }

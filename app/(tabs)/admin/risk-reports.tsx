@@ -195,7 +195,7 @@ export default function RiskReportsScreen() {
     <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
       <View className="flex-row justify-between items-center mb-2">
         <Text className="font-bold text-lg">
-          {item.profiles?.username || 'Usuario desconocido'}
+          {item.profiles?.full_name || 'Usuario desconocido'}
         </Text>
         <Text className="text-gray-500 text-xs">
           {new Date(item.timestamp).toLocaleString('es-ES')}

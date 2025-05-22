@@ -61,7 +61,7 @@ export default function HomeScreen() {
         <FraseMotivacional frase={frase} />
         <TouchableOpacity
           onPress={recargarFrase}
-          className="mt-4 px-6 py-2 bg-[#A1CEDC] rounded-full shadow-md active:bg-[#7bb7c7]"
+          className="mt-4 px-6 py-2 bg-blue-500 rounded-full shadow-md"
           accessibilityLabel="Recargar frase motivacional"
         >
           <ThemedText className="text-base font-semibold text-[#1D3D47]">

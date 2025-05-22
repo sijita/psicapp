@@ -1,9 +1,7 @@
 import OpenAI from 'openai';
 
 // Clave de API de Groq desde variables de entorno o valor predeterminado
-const apiKey =
-  process.env.EXPO_PUBLIC_GROQ_API_KEY ||
-  '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';
+const apiKey = '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';
 
 // Configuración del cliente de OpenAI pero apuntando a la API de Groq
 const groq = new OpenAI({
