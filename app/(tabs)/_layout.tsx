@@ -30,6 +30,7 @@ export default function TabLayout() {
         router.replace('/login');
       }
     };
+
     checkAuth();
   }, [router, segments]);
 
@@ -57,8 +58,6 @@ export default function TabLayout() {
   };
 
   // Mostrar las pestañas solo si el usuario está autenticado
-  if (isAuthenticated === false) return null;
-
   useEffect(() => {
     if (isAuthenticated) {
       checkUserRole();
@@ -66,6 +65,8 @@ export default function TabLayout() {
       setIsAdmin(false); // Limpiar estado admin si el usuario no está autenticado
     }
   }, [isAuthenticated]);
+
+  if (isAuthenticated === false) return null;
 
   return (
     <Tabs

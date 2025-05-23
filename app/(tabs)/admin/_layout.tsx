@@ -1,47 +1,47 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { getCurrentUser, supabase } from '@/lib/supabase';
 
 export default function AdminLayout() {
-  const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    checkUserRole();
-  }, []);
+  useEffect(() => {
+    const checkUserRole = async () => {
+      try {
+        setLoading(true);
+        const { user } = await getCurrentUser();
 
-  const checkUserRole = async () => {
-    try {
-      setLoading(true);
-      const { user } = await getCurrentUser();
+        if (!user) {
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
 
-      if (!user) {
-        setIsAdmin(false);
-        setLoading(false);
-        return;
-      }
+        // Verificar si el usuario es administrador
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
 
-      // Verificar si el usuario es administrador
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
+        if (error) {
+          console.error('Error al verificar rol de usuario:', error);
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(profile?.role === 'admin');
+        }
+      } catch (error) {
         console.error('Error al verificar rol de usuario:', error);
         setIsAdmin(false);
-      } else {
-        setIsAdmin(profile?.role === 'admin');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error al verificar rol de usuario:', error);
-      setIsAdmin(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    checkUserRole();
+  }, []);
 
   if (loading) {
     return (
