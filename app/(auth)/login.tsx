@@ -8,6 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { signIn } from '@/lib/supabase';
@@ -46,55 +47,61 @@ export default function LoginScreen() {
       behavior="padding"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <Stack.Screen options={{ title: 'Iniciar Sesión', headerShown: true }} />
-
-      <View className="items-center mb-8">
-        <Image
-          source={require('../../assets/images/logo.jpg')}
-          style={{ width: 200, height: 200, resizeMode: 'contain' }}
-          className="rounded-lg"
-        />
-      </View>
-      <Text className="text-lg mb-6 text-center text-gray-600">
-        Asistencia psicológica en tiempo real
-      </Text>
-
-      <View className="flex-col gap-5 mb-6">
-        <TextInput
-          className="bg-gray-100 p-4 rounded-lg text-gray-800"
-          placeholder="Correo electrónico"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
+      <ScrollView className="flex-1">
+        <Stack.Screen
+          options={{ title: 'Iniciar Sesión', headerShown: true }}
         />
 
-        <TextInput
-          className="bg-gray-100 p-4 rounded-lg text-gray-800"
-          placeholder="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-      </View>
-
-      <TouchableOpacity
-        className="bg-blue-600 p-4 rounded-lg items-center mb-4"
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-white font-bold text-lg">Iniciar Sesión</Text>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.push('/register')}>
-        <Text className="text-center text-blue-600">
-          ¿No tienes una cuenta? Regístrate
+        <View className="items-center mb-8">
+          <Image
+            source={require('../../assets/images/logo.jpg')}
+            style={{ width: 200, height: 200, resizeMode: 'contain' }}
+            className="rounded-lg"
+          />
+        </View>
+        <Text className="text-lg mb-6 text-center text-gray-600">
+          Asistencia psicológica en tiempo real
         </Text>
-      </TouchableOpacity>
+
+        <View className="flex-col gap-5 mb-6">
+          <TextInput
+            className="bg-gray-100 p-4 rounded-lg text-gray-800"
+            placeholder="Correo electrónico"
+            placeholderTextColor="#9CA3AF"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          <TextInput
+            className="bg-gray-100 p-4 rounded-lg text-gray-800"
+            placeholder="Contraseña"
+            placeholderTextColor="#9CA3AF"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+
+        <TouchableOpacity
+          className="bg-blue-600 p-4 rounded-lg items-center mb-4"
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-white font-bold text-lg">Iniciar Sesión</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push('/register')}>
+          <Text className="text-center text-blue-600">
+            ¿No tienes una cuenta? Regístrate
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }

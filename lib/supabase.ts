@@ -34,7 +34,7 @@ export const signUp = async (
   if (data.user && nombre && apellido) {
     const { error: profileError } = await supabase.from('profiles').upsert({
       id: data.user.id,
-      email,
+      username: email,
       full_name: `${nombre} ${apellido}`,
     });
     if (profileError) return { data, error: profileError };
