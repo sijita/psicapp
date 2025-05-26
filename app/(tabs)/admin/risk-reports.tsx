@@ -18,7 +18,7 @@ import { getCurrentUser, supabase } from '@/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
 
 type ReportWithProfile = RiskReport & {
-  profiles: {
+  profile: {
     username: string;
     full_name: string;
     avatar_url: string;
@@ -191,45 +191,48 @@ export default function RiskReportsScreen() {
     </View>
   );
 
-  const renderReportItem = ({ item }: { item: ReportWithProfile }) => (
-    <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
-      <View className="flex-row justify-between items-center mb-2">
-        <Text className="font-bold text-lg">
-          {item.profiles?.full_name || 'Usuario desconocido'}
-        </Text>
-        <Text className="text-gray-500 text-xs">
-          {new Date(item.timestamp).toLocaleString('es-ES')}
-        </Text>
-      </View>
-
-      <Text className="text-gray-800 mb-2">{item.message_content}</Text>
-
-      <View className="bg-red-50 p-2 rounded mb-2">
-        <Text className="text-red-700 font-medium">Palabras detectadas:</Text>
-        <Text className="text-red-600">
-          {item.detected_keywords.join(', ')}
-        </Text>
-      </View>
-
-      {renderSeverityButtons(item)}
-
-      {!item.reviewed && (
-        <TouchableOpacity
-          className="bg-blue-500 py-2 px-4 rounded-lg mt-3 items-center"
-          onPress={() => markAsReviewed(item.id!)}
-        >
-          <Text className="text-white font-medium">Marcar como revisado</Text>
-        </TouchableOpacity>
-      )}
-
-      {item.reviewed && (
-        <View className="flex-row items-center mt-3">
-          <Ionicons name="checkmark-circle" size={18} color="#10B981" />
-          <Text className="text-green-600 ml-1">Revisado</Text>
+  const renderReportItem = ({ item }: { item: ReportWithProfile }) => {
+    console.log('Rendering report item:', item); // Agrega este console.log para depurar
+    return (
+      <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="font-bold text-lg">
+            {item.profile?.full_name || 'Usuario desconocido'}
+          </Text>
+          <Text className="text-gray-500 text-xs">
+            {new Date(item.timestamp).toLocaleString('es-ES')}
+          </Text>
         </View>
-      )}
-    </View>
-  );
+
+        <Text className="text-gray-800 mb-2">{item.message_content}</Text>
+
+        <View className="bg-red-50 p-2 rounded mb-2">
+          <Text className="text-red-700 font-medium">Palabras detectadas:</Text>
+          <Text className="text-red-600">
+            {item.detected_keywords.join(', ')}
+          </Text>
+        </View>
+
+        {renderSeverityButtons(item)}
+
+        {!item.reviewed && (
+          <TouchableOpacity
+            className="bg-blue-500 py-2 px-4 rounded-lg mt-3 items-center"
+            onPress={() => markAsReviewed(item.id!)}
+          >
+            <Text className="text-white font-medium">Marcar como revisado</Text>
+          </TouchableOpacity>
+        )}
+
+        {item.reviewed && (
+          <View className="flex-row items-center mt-3">
+            <Ionicons name="checkmark-circle" size={18} color="#10B981" />
+            <Text className="text-green-600 ml-1">Revisado</Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   if (!isAdmin) {
     return (
